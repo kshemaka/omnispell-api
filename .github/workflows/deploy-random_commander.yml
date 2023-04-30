@@ -28,3 +28,25 @@ jobs:
       - name: Test with unittest
         run: |
           python -m unittest
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - id: auth
+        name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - id: deploy
+        name: Deploy to Cloud Functions
+        uses: google-github-actions/deploy-cloud-functions@v1
+        with:
+          name: "random_commander"
+          runtime: "python311"
+          region: ${{ secrets.GCP_REGION }}
+          source_dir: "random_commander"
