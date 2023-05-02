@@ -26,8 +26,19 @@ data = retrieve_data()
 
 
 def random_commander(request: flask.Request) -> flask.Response:
+    if request.method == 'OPTIONS':
+        headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Max-Age': '3600'
+        }
+        return flask.Response(status=204, headers=headers)
+
     if len(data) > 0:
         card = data[random.randrange(0, len(data))]
-        return flask.jsonify(card)
+        response = flask.jsonify(card)
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
     else:
         return flask.Response(status=500)

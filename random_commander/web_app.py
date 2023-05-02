@@ -1,10 +1,8 @@
 import flask
-from flask_cors import CORS
 
 import main
 
 app = flask.Flask(__name__)
-CORS(app, origins="http://localhost:8000")
 
 
 @app.get("/cards/random-commander")
